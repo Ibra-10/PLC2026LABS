@@ -82,13 +82,24 @@ public class PlaylistSubprg {
             this(items, 0);
         }
 
-        public Item getNextItem() throws EndOfPlaylist { //Extension Task 3b: Replace with a pure procedure and a pure function
-            if (index >= items.size()) {
+        // public Item getNextItem() throws EndOfPlaylist { //Extension Task 3b: Replace with a pure procedure and a pure function
+        //     if (index >= items.size()) {
+        //         throw new EndOfPlaylist();
+        //     }
+        //     Item result = items.get(index);
+        //     index++;
+        //     return result;
+        // }
+
+        public Item getCurrentItem(){
+            return items.get(index);
+        }
+
+        public void shiftToNextItem() throws EndOfPlaylist {
+            if(index + 1 > items.size()){
                 throw new EndOfPlaylist();
             }
-            Item result = items.get(index);
             index++;
-            return result;
         }
 
         public class EndOfPlaylist extends Exception {
@@ -109,10 +120,21 @@ public class PlaylistSubprg {
      * @return The length of the first two items in the playlist
      * @throws PlaylistProgress.EndOfPlaylist
      */
+    // public static float getPlaylistLengthTwoItems(List<Item> playlist) throws PlaylistProgress.EndOfPlaylist {
+    //     PlaylistProgress progress = new PlaylistProgress(playlist);
+    //     // TASK 3a: Is the expression below referentially transparent?
+    //     return twice(progress.getNextItem().length_secs);
+    // }
+
     public static float getPlaylistLengthTwoItems(List<Item> playlist) throws PlaylistProgress.EndOfPlaylist {
+        
         PlaylistProgress progress = new PlaylistProgress(playlist);
-        // TASK 3a: Is the expression below referentially transparent?
-        return twice(progress.getNextItem().length_secs);
+
+        float result = 0;
+        result += progress.getCurrentItem().length_secs;
+        progress.shiftToNextItem();
+        result += progress.getCurrentItem().length_secs;
+        return result;
     }
 
     private static float twice(float x) {
@@ -170,16 +192,19 @@ public class PlaylistSubprg {
     public static void getPlaylistLength_CopyInCopyOutPassing(List<Item> playlist, FloatHolder result,
             FloatHolder resultNoAds) {
         // TASK 2b: complete this method, simulating copy-in/copy-out parameter passing
+        
+        float temp1 = result.x;
+        float temp2 = resultNoAds.x;
 
-
-
-
-
-
-
-
-
-
+        for(Item item : playlist) {
+            temp1 = temp1 + item.length_secs;
+            if(!(item instanceof Advert)){
+                temp2 = temp2 + item.length_secs;
+            }
+        }
+        
+        result.x = temp1;
+        resultNoAds.x = temp2;
     }
 
     public static void main(String[] args)
@@ -231,11 +256,21 @@ public class PlaylistSubprg {
         System.out.println();
 
         PlaylistProgress progress = new PlaylistProgress(playlist1);
+        // while (true) {
+        //     try {
+        //         float remainingLength = progress.getRemainingLength();
+        //         System.out.printf("Next item = %s \n", progress.getNextItem());
+        //         System.out.printf("  remaining play time = %.2f \n", remainingLength);
+        //     } catch (PlaylistProgress.EndOfPlaylist e) {
+        //         break;
+        //     } 
+        // }
         while (true) {
             try {
                 float remainingLength = progress.getRemainingLength();
-                System.out.printf("Next item = %s \n", progress.getNextItem());
+                System.out.printf("Next item = %s \n", progress.getCurrentItem());
                 System.out.printf("  remaining play time = %.2f \n", remainingLength);
+                progress.shiftToNextItem();
             } catch (PlaylistProgress.EndOfPlaylist e) {
                 break;
             } 
