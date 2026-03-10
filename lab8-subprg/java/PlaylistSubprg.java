@@ -183,7 +183,7 @@ public class PlaylistSubprg {
     }
 
     public static void main(String[] args)
-        throws PlaylistProgress.EndOfPlaylist 
+
         {
         // TASK 1b: remove the above throws declaration, and handle the exception properly in the loop at line 234
 
@@ -231,10 +231,14 @@ public class PlaylistSubprg {
         System.out.println();
 
         PlaylistProgress progress = new PlaylistProgress(playlist1);
-        while (true) {        //TASK 1c: Modify this loop to handle the EndOfPlaylist exception
-            float remainingLength = progress.getRemainingLength();
-            System.out.printf("Next item = %s \n", progress.getNextItem());
-            System.out.printf("  remaining play time = %.2f \n", remainingLength);
+        while (true) {
+            try {
+                float remainingLength = progress.getRemainingLength();
+                System.out.printf("Next item = %s \n", progress.getNextItem());
+                System.out.printf("  remaining play time = %.2f \n", remainingLength);
+            } catch (PlaylistProgress.EndOfPlaylist e) {
+                break;
+            } 
         }
     }
 }
